@@ -1,3 +1,7 @@
+/*
 ".imc-rating": { width: Titanium.UI.SIZE, height: 24, layout: 'horizontal' }
 	".imc-rating-star": { width: 24, height: 24, touchEnabled: false }
-		".imc-rating-star-icon": { width: 24, height: 24, image: WPATH('/images/star.png'), touchEnabled: false }
+	".imc-rating-empty": { image: '/images/star.png' }
+	".imc-rating-full": { image: '/images/star-full.png' }
+	".imc-rating-half": { image: '/images/star-half.png' }
+*/

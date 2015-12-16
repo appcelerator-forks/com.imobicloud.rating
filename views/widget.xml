@@ -1,19 +1,3 @@
 <Alloy>
-	<View class="imc-rating">
-		<View class="imc-rating-star">
-			<ImageView class="imc-rating-star-icon"/>
-		</View>
-		<View class="imc-rating-star">
-			<ImageView class="imc-rating-star-icon"/>
-		</View>
-		<View class="imc-rating-star">
-			<ImageView class="imc-rating-star-icon"/>
-		</View>
-		<View class="imc-rating-star">
-			<ImageView class="imc-rating-star-icon"/>
-		</View>
-		<View class="imc-rating-star">
-			<ImageView class="imc-rating-star-icon"/>
-		</View>
-	</View>
+	<View class="imc-rating"/>
 </Alloy>

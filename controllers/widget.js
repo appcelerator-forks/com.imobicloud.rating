@@ -1,62 +1,59 @@
-var args = arguments[0],
-	width = 24;
+var value, G;
 
-init();
-function init() {
+init(arguments[0] || {});
+function init(args) {
 	var container = $.getView();
 	
-  	var exclude = ['id', 'children', 'clickable', 'value', 'size'];
+  	var exclude = ['id', 'clickable'];
     container.applyProperties( _.omit(args, exclude) );
-    
-    if (args.size) {
-    	width = parseInt(args.size, 10);
-    	container.height = width;
-    	var children = container.children;
-	  	for(var i=0,j=children.length; i<j; i++){
-			children[i].applyProperties({ width: width, height: width });
-		};
-    }
-    
-    if (args.value != null) {
-    	setValue( parseFloat(args.value) );
-    }
     
     if (args.clickable == 'true') {
     	container.addEventListener('click', ratingClick);
     }
 }
 
-function ratingClick(e) {
-  	var x = e.x,
-  		halfWidth = width / 2,
-  		children = this.children;
-  		
-  	for(var i=0,j=children.length; i<j; i++){
-  		var image = '/images/star.png',
-  			current = i * width;
-		if (current < x) {
-			if (x - current > halfWidth) {
-				image = '/images/star-full.png';
-			} else {
-				image = '/images/star-half.png';
-			}
-		}
-		children[i].children[0].image = WPATH(image);
+exports.load = function(_G, params) {
+	G = _G;
+	value = params.value;
+	
+	var container = $.getView();
+	for (var i=0; i < 5; i++) {
+	  	container.add( _G.UI.create('ImageView', { classes: 'imc-rating-star ' + getClass(i), touchEnabled: false }) );
 	};
+};
+
+function getClass(i) {
+  	var classes = 'imc-rating-empty';
+	if (i < value) {
+		if (value - i > 0.5) {
+			classes = 'imc-rating-full';
+		} else {
+			classes = 'imc-rating-half';
+		}
+	}
+	return classes;
 }
 
-function setValue(value) {
+function ratingClick(e) {
+	var width = $.getView().rect.width;
+	
+  	var _value = Math.floor(e.x / width);
+  	var remain = e.x / width - _value;
+  	_value += remain > 0.5 ? 1 : (remain > 0.5 ? 0.5 : 0);	
+  	
+  	setValue(_value);
+}
+
+function setValue(_value) {
+	value = _value;
+	
   	var children = $.getView().children;
   	for(var i=0,j=children.length; i<j; i++){
-  		var image = '/images/star.png';
-		if (i < value) {
-			if (value - i > 0.5) {
-				image = '/images/star-full.png';
-			} else {
-				image = '/images/star-half.png';
-			}
-		}
-		children[i].children[0].image = WPATH(image);
+  		children[i].applyProperties( G.createStyle({ classes: getClass(i) }) );
 	};
 }
 exports.setValue = setValue;
+
+exports.getValue = function() {
+	return value;
+};
