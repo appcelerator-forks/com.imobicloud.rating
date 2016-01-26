@@ -22,6 +22,10 @@ exports.load = function(_G, params) {
 	};
 };
 
+exports.unload = function() {
+	G = null;
+};
+
 function getClass(i) {
   	var classes = 'imc-rating-empty';
 	if (i < value) {
@@ -35,12 +39,8 @@ function getClass(i) {
 }
 
 function ratingClick(e) {
-	var width = $.getView().rect.width;
-	
-  	var _value = Math.floor(e.x / width);
-  	var remain = e.x / width - _value;
-  	_value += remain > 0.5 ? 1 : (remain > 0.5 ? 0.5 : 0);	
-  	
+	var width = $.getView().rect.width / 5;
+  	var _value = Math.ceil(e.x / width);
   	setValue(_value);
 }
 
