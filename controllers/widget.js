@@ -1,4 +1,4 @@
-var value, G;
+var G, params;
 
 init(arguments[0] || {});
 function init(args) {
@@ -12,24 +12,38 @@ function init(args) {
     }
 }
 
-exports.load = function(_G, params) {
+/*
+ _params = {
+ 	value: 0,
+ 	module: null // use iconfont module for icon. ex: require('iconfont')
+ }
+ * */
+exports.load = function(_G, _params) {
+	params && $.container.removeAllChildren();
+	
 	G = _G;
-	value = params.value;
+	params = _params;
 	
 	var container = $.getView();
 	for (var i=0; i < 5; i++) {
-	  	container.add( _G.UI.create('ImageView', { classes: 'imc-rating-star ' + getClass(i), touchEnabled: false }) );
+		var starStyle = { classes: 'imc-rating-star ' + getClass(i), touchEnabled: false };
+	  	if (params.module == null) {
+			container.add( _G.UI.create('ImageView', starStyle) );
+		} else {
+			container.add( _params.module.createLabel( G.createStyle(starStyle) ) );
+		}
 	};
 };
 
 exports.unload = function() {
-	G = null;
+	$.container.removeAllChildren();
+	G = params = null;
 };
 
 function getClass(i) {
   	var classes = 'imc-rating-empty';
-	if (i < value) {
-		if (value - i > 0.5) {
+	if (i < params.value) {
+		if (params.value - i > 0.5) {
 			classes = 'imc-rating-full';
 		} else {
 			classes = 'imc-rating-half';
@@ -45,15 +59,19 @@ function ratingClick(e) {
 }
 
 function setValue(_value) {
-	value = _value;
+	params.value = _value;
 	
   	var children = $.getView().children;
   	for(var i=0,j=children.length; i<j; i++){
-  		children[i].applyProperties( G.createStyle({ classes: getClass(i) }) );
+  		var starStyle = G.createStyle({ classes: getClass(i) });
+  		if (params.module && starStyle.text) {
+	  		starStyle.text = params.module.getText(starStyle.text);
+		}
+  		children[i].applyProperties(starStyle);
 	};
 }
 exports.setValue = setValue;
 
 exports.getValue = function() {
-	return value;
+	return params.value;
 };
