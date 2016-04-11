@@ -7,7 +7,7 @@ function init(args) {
   	var exclude = ['id', 'clickable'];
     container.applyProperties( _.omit(args, exclude) );
     
-    if (args.clickable == 'true') {
+    if (args.clickable === true) {
     	container.addEventListener('click', ratingClick);
     }
 }
@@ -55,7 +55,12 @@ function getClass(i) {
 function ratingClick(e) {
 	var width = $.getView().rect.width / 5;
   	var _value = Math.ceil(e.x / width);
-  	setValue(_value);
+  	
+  	if (_value != params.value) {
+  		setValue(_value);
+  	
+  		$.trigger('change', { value: _value });
+  	}
 }
 
 function setValue(_value) {
