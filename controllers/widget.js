@@ -1,8 +1,13 @@
 var G, params;
 
-init(arguments[0] || {});
+var measurement;
+if (OS_ANDROID) {
+	measurement = require('alloy/measurement');
+}
+
+init($.args);
 function init(args) {
-	var container = $.getView();
+	var container = $.container;
 	
   	var exclude = ['id', 'clickable'];
     container.applyProperties( _.omit(args, exclude) );
@@ -24,7 +29,7 @@ exports.load = function(_G, _params) {
 	G = _G;
 	params = _params;
 	
-	var container = $.getView();
+	var container = $.container;
 	for (var i=0; i < 5; i++) {
 		var starStyle = { classes: 'imc-rating-star ' + getClass(i), touchEnabled: false };
 	  	if (params.module == null) {
@@ -53,8 +58,13 @@ function getClass(i) {
 }
 
 function ratingClick(e) {
-	var width = $.getView().rect.width / 5;
-  	var _value = Math.ceil(e.x / width);
+	var touchX = e.x;
+	if (OS_ANDROID) {
+		touchX = measurement.pxToDP(touchX);
+	}
+	
+	var width = $.container.rect.width / 5;
+  	var _value = Math.ceil(touchX / width);
   	
   	if (_value != params.value) {
   		setValue(_value);
@@ -66,7 +76,7 @@ function ratingClick(e) {
 function setValue(_value) {
 	params.value = _value;
 	
-  	var children = $.getView().children;
+  	var children = $.container.children;
   	for(var i=0,j=children.length; i<j; i++){
   		var starStyle = G.createStyle({ classes: getClass(i) });
   		if (params.module && starStyle.text) {
