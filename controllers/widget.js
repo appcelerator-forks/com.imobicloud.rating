@@ -1,60 +1,68 @@
-var G, params;
+var args = $.args;
+var module;
 
 var measurement;
 if (OS_ANDROID) {
 	measurement = require('alloy/measurement');
 }
 
-init($.args);
-function init(args) {
+init();
+function init() {
 	var container = $.container;
 	
-  	var exclude = ['id', 'clickable'];
+  	var exclude = ['id', 'clickable', 'value', 'Star', 'StarEmpty', 'StarFull', 'StarHalf'];
     container.applyProperties( _.omit(args, exclude) );
     
-    if (args.clickable === true) {
-    	container.addEventListener('click', ratingClick);
-    }
+	args.clickable && container.addEventListener('click', ratingClick);
+    
+    args.value != null && loadStars();
 }
 
 /*
- _params = {
+ params = {
  	value: 0,
  	module: null // use iconfont module for icon. ex: require('iconfont')
  }
  * */
-exports.load = function(_G, _params) {
-	params && $.container.removeAllChildren();
-	
-	G = _G;
-	params = _params;
-	
-	var container = $.container;
-	for (var i=0; i < 5; i++) {
-		var starStyle = { classes: 'imc-rating-star ' + getClass(i), touchEnabled: false };
-	  	if (params.module == null) {
-			container.add( _G.UI.create('ImageView', starStyle) );
-		} else {
-			container.add( _params.module.createLabel( G.createStyle(starStyle) ) );
-		}
-	};
+exports.load = function(params) {
+	unloadStars();
+	args.value = params.value;
+	module = params.module;
+	loadStars();
 };
 
 exports.unload = function() {
-	$.container.removeAllChildren();
-	G = params = null;
+	unloadStars();
+	args = null;
+	module = null;
 };
 
-function getClass(i) {
-  	var classes = 'imc-rating-empty';
-	if (i < params.value) {
-		if (params.value - i > 0.5) {
-			classes = 'imc-rating-full';
+function unloadStars() {
+  	$.container.removeAllChildren();
+}
+
+function loadStars() {
+  	var container = $.container;
+	for (var i=0; i < 5; i++) {
+		var starStyle = _.extend({ touchEnabled: false }, args.Star, getStyles(i));
+	  	if (module == null) {
+			container.add( $.UI.create('ImageView', starStyle) );
 		} else {
-			classes = 'imc-rating-half';
+			container.add( module.createLabel(starStyle) );
+		}
+	};
+}
+
+function getStyles(i) {
+  	var styles = args.StarEmpty;
+	if (i < args.value) {
+		if (args.value - i > 0.5) {
+			styles = args.StarFull;
+		} else {
+			styles = args.StarHalf;
 		}
 	}
-	return classes;
+	return styles;
 }
 
 function ratingClick(e) {
@@ -66,21 +74,20 @@ function ratingClick(e) {
 	var width = $.container.rect.width / 5;
   	var _value = Math.ceil(touchX / width);
   	
-  	if (_value != params.value) {
+  	if (_value != args.value) {
   		setValue(_value);
-  	
   		$.trigger('change', { value: _value });
   	}
 }
 
 function setValue(_value) {
-	params.value = _value;
+	args.value = _value;
 	
   	var children = $.container.children;
   	for(var i=0,j=children.length; i<j; i++){
-  		var starStyle = G.createStyle({ classes: getClass(i) });
-  		if (params.module && starStyle.text) {
-	  		starStyle.text = params.module.getText(starStyle.text);
+  		var starStyle = getStyles(i);
+  		if (module && starStyle.text) {
+	  		starStyle.text = module.getText(starStyle.text);
 		}
   		children[i].applyProperties(starStyle);
 	};
@@ -88,5 +95,5 @@ function setValue(_value) {
 exports.setValue = setValue;
 
 exports.getValue = function() {
-	return params.value;
+	return args.value;
 };
