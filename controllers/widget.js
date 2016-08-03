@@ -26,7 +26,9 @@ function init() {
  * */
 exports.load = function(params) {
 	unloadStars();
+	
 	args.value = params.value;
+	
 	module = params.module;
 	loadStars();
 };
@@ -55,8 +57,10 @@ function loadStars() {
 
 function getStyles(i) {
   	var styles = args.StarEmpty;
-	if (i < args.value) {
-		if (args.value - i > 0.5) {
+  	var value = args.StarHalf ? args.value: Math.floor(args.value);
+  	
+	if (i < value) {
+		if (value - i > 0.5) {
 			styles = args.StarFull;
 		} else {
 			styles = args.StarHalf;
