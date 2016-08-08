@@ -34,6 +34,7 @@ exports.load = function(params) {
 };
 
 exports.unload = function() {
+	args.clickable && $.container.removeEventListener('click', ratingClick);
 	unloadStars();
 	args = null;
 	module = null;
@@ -100,4 +101,9 @@ exports.setValue = setValue;
 
 exports.getValue = function() {
 	return args.value;
+};
+
+exports.setClickable = function(clickable) {
+    args.clickable = clickable;
+    $.container[clickable ? 'addEventListener' : 'removeEventListener']('click', ratingClick);
 };

@@ -46,9 +46,14 @@ js
 	
 	$.rating.unload();
 	
+	$.rating.setClickable(true);
+	
 	function ratingChange(e) { e.value }
 
 Change log:
+- 8/8/2016
+	+ add setClickable function
+
 - 5/26/2016: 
 	+ remove $ parameter of load function
 	+ change tss
