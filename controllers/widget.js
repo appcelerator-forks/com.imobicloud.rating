@@ -21,6 +21,7 @@ function init() {
 /*
  params = {
  	value: 0,
+ 	clickable: null,
  	module: null // use iconfont module for icon. ex: require('iconfont')
  }
  * */
@@ -28,6 +29,11 @@ exports.load = function(params) {
 	unloadStars();
 	
 	args.value = params.value;
+	
+	if (params.clickable != null) {
+		args.clickable = params.clickable;
+   		$.container[ params.clickable ? 'addEventListener' : 'removeEventListener' ]('click', ratingClick);
+	}
 	
 	module = params.module;
 	loadStars();
@@ -101,9 +107,4 @@ exports.setValue = setValue;
 
 exports.getValue = function() {
 	return args.value;
-};
-
-exports.setClickable = function(clickable) {
-    args.clickable = clickable;
-    $.container[clickable ? 'addEventListener' : 'removeEventListener']('click', ratingClick);
 };
