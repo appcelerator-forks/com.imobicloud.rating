@@ -30,7 +30,7 @@ tss
 js
 
 	// load value manualy
-	$.rating.load({ value: 3, clickable: null });
+	$.rating.load({ value: 3 });
 	
 	/*
 	// use iconfont for checkbox's icon
@@ -49,12 +49,6 @@ js
 	function ratingChange(e) { e.value }
 
 Change log:
-- 8/8/2016
-	+ add clickable parameter of load function
-		* null: ignore
-		* true: click-able
-		* false: not click-able
-
 - 5/26/2016: 
 	+ remove $ parameter of load function
 	+ change tss
